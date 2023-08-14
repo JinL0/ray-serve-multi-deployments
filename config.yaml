@@ -1,0 +1,68 @@
+# This file was generated using the `serve build` command on Ray v2.6.1.
+
+proxy_location: EveryNode
+
+http_options:
+
+  host: 0.0.0.0
+
+  port: 8000
+
+applications:
+
+- name: app1
+
+  route_prefix: /gpt2
+
+  import_path: multi-deployment:gpt2
+
+  runtime_env: {}
+
+  deployments:
+
+  - name: gpt2
+    autoscaling_config:
+      min_replicas: 1
+      initial_replicas: null
+      max_replicas: 4
+      target_num_ongoing_requests_per_replica: 1.0
+      metrics_interval_s: 10.0
+      look_back_period_s: 30.0
+      smoothing_factor: 1.0
+      downscale_delay_s: 600.0
+      upscale_delay_s: 30.0
+    ray_actor_options:
+      runtime_env:
+        pip:
+        - transformers
+
+  - name: DAGDriver
+
+- name: app2
+
+  route_prefix: /mnist
+
+  import_path: multi-deployment:mnist
+
+  runtime_env: {}
+
+  deployments:
+
+  - name: mnist
+    autoscaling_config:
+      min_replicas: 1
+      initial_replicas: null
+      max_replicas: 2
+      target_num_ongoing_requests_per_replica: 1.0
+      metrics_interval_s: 10.0
+      look_back_period_s: 30.0
+      smoothing_factor: 1.0
+      downscale_delay_s: 600.0
+      upscale_delay_s: 30.0
+    ray_actor_options:
+      runtime_env:
+        pip:
+        - torch
+        - torchvision
+
+  - name: DAGDriver
